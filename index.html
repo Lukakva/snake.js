@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<style type="text/css">
+	html, body, #snake-container {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+	}
+
+
+	#snake-container canvas {
+		margin: 0 auto;
+		display: block;
+		border: 1px solid;
+	}
+
+</style>
+<body>
+	<div id="snake-container"></div>
+</body>
+<script type="text/javascript" src="snake.js"></script>
+<script type="text/javascript">
+	top.snake = new Snake({
+		node: document.getElementById("snake-container"),
+		gridX: 19,
+		gridY: 19,
+		snakeColor: "yellow"
+	});
+</script>
+</html>
