@@ -45,9 +45,9 @@ function Snake(params) {
 		gridX: 10,
 		gridY: 10,
 		initialSize: 5,
-		accelerationRatePerSecond: 0.1,
+		accelerationRatePerScore: 0.2,
 		growsEveryNthFood: 10,
-		maxSizeInPercents: "5%" // max size of snake with percents (percent of WHOLE grid) 
+		maxSizeInPercents: "90%" // max size of snake with percents (percent of WHOLE grid) 
 	};
 
 	for (var param in params) {
@@ -339,7 +339,6 @@ Snake.prototype = {
 			var shouldGrow = foodEaten && this.foodEaten % this.growsEveryNthFood === 0;
 
 			var canGrow = this.maximumSnakeSize() > this.snakeComponents.length;
-			console.log(canGrow, this.snakeComponents.length);
 
 			if (!foodEaten && !shouldGrow) {
 				// if snake did not eat food at this frame, remove last element, other so that unshift and pop equal eachother out and
@@ -353,11 +352,11 @@ Snake.prototype = {
 					// if snake ate something and it SHOULD grow but it exceeds the limit, don't do it
 					this.snakeComponents.pop();
 				}
+				this.speed = parseFloat((this.speed + this.accelerationRatePerScore).toFixed(2));
 			}
 		};
 
 		this.frameCount++;
-		this.speed += this.accelerationRatePerSecond / 60;
 
 		window.requestAnimFrame(this.update.bind(this));
 	},

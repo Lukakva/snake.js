@@ -31,7 +31,7 @@ new Snake({
 	gridX: 10, // horizontal count of grids
 	gridY: 10, // vertical count of grids
 	initialSize: 5, // initial size of snake (in grids)
-	accelerationRatePerSecond: 0.1, // acceleration rate for snake
+	accelerationRatePerScore: 0.1, // acceleration rate for snake per score increase
 	growsEveryNthFood: 10, // how many food has to be eaten to grow
 	maxSizeInPercents: "90%" // max size of snake. calculated from whole grid size
 });
