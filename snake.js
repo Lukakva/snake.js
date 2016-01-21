@@ -46,7 +46,6 @@ function Snake(params) {
 		gridY: 10,
 		initialSize: 5,
 		accelerationRatePerSecond: 0.1,
-		FPS: 2,
 		growsEveryNthFood: 10,
 		maxSizeInPercents: "5%" // max size of snake with percents (percent of WHOLE grid) 
 	};
