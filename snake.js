@@ -41,8 +41,9 @@ function Snake(params) {
 		snakeColor: "#000",
 		backgroundColor: "#fff",
 		foodColor: "#000",
-		gridX: 10,
-		gridY: 10,
+		scoreboardColor: "#000",
+		gridX: 50,
+		gridY: 50,
 		initialSize: 3,
 		accelerationRatePerScore: 0.2,
 		growsEveryNthFood: 10,
@@ -56,10 +57,13 @@ function Snake(params) {
 	if (!allowedParams.node) return {error: "Could not initialize snake object since no node was provided in arguments JSON"};
 
 	var canvasWrapper = document.createElement("div");
+	var scoreboard    = document.createElement("span");
 	var canvas        = document.createElement("canvas");
 	var ctx           = canvas.getContext("2d");
+
 	allowedParams.node.appendChild(canvasWrapper);
 	canvasWrapper.appendChild(canvas);
+	canvasWrapper.appendChild(scoreboard);
 
 	var widthAndHeight = allowedParams.node.clientHeight <= allowedParams.node.clientWidth ?  allowedParams.node.clientHeight : allowedParams.node.clientWidth;
 
@@ -78,10 +82,21 @@ function Snake(params) {
 	this.canvas        = canvas;
 	this.ctx           = ctx;
 	this.canvasWrapper = canvasWrapper;
+	this.scoreboard    = scoreboard;
 
 	for (var param in allowedParams) {
 		this[param] = allowedParams[param];
 	}
+
+	applyCSS(scoreboard, {
+		position: "absolute",
+		top: "5px",
+		right: "5px",
+		color: this.scoreboardColor,
+		fontSize: "16px",
+		fontFamily: "Helvetica"
+	});
+	scoreboard.innerHTML = "0";
 
 	this.init();
 }
@@ -230,7 +245,7 @@ Snake.prototype = {
 		this.reset();
 	},
 	onscoreupdate: function(score) {
-
+		this.scoreboard.innerHTML = score;
 	},
 	reset: function() {
 		this.snakeComponents = [];
@@ -268,7 +283,6 @@ Snake.prototype = {
 		// so we have to calculate which frame is it and whether it should be drawn or not
 
 		// since requestAnimationFrame is called 60 times per second
-		var actualFPS = 60;
 		var everyNthFrame = Math.round(60 / this.speed);
 
 		// do this for every N-th frame

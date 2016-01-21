@@ -28,8 +28,9 @@ new Snake({
 	snakeColor: "#000", // color of the snake
 	backgroundColor: "#fff", // background color of canvas
 	foodColor: "#000", // color of food
-	gridX: 10, // horizontal count of grids
-	gridY: 10, // vertical count of grids
+    scoreboardColor: "#000", // color of scoreboard
+	gridX: 50, // horizontal count of grids
+	gridY: 50, // vertical count of grids
 	initialSize: 3, // initial size of snake (in grids)
 	accelerationRatePerScore: 0.1, // acceleration rate for snake per score increase
 	growsEveryNthFood: 10, // how many food has to be eaten to grow
