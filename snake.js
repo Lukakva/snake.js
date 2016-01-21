@@ -238,6 +238,7 @@ Snake.prototype = {
 		this.initSnake();
 		this.spawnFood();
 		this.direction = DIRECTION_LEFT;
+		this.foodEaten = 0;
 
 		this.paused = false;
 	},
