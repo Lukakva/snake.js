@@ -34,7 +34,6 @@ var ARROW_LEFT  = 37,
 	ARROW_DOWN  = 40;
 
 
-
 function Snake(params) {
 	var allowedParams = {
 		node: null,
@@ -65,9 +64,10 @@ function Snake(params) {
 	var widthAndHeight = allowedParams.node.clientHeight <= allowedParams.node.clientWidth ?  allowedParams.node.clientHeight : allowedParams.node.clientWidth;
 
 	applyCSS(canvasWrapper, {
-		width: allowedParams.node.clientWidth,
-		height: allowedParams.node.clientHeight,
-		position: "relative" // to keep control panel buttons inside
+		width: widthAndHeight + "px",
+		height: widthAndHeight + "px",
+		position: "relative", // to keep control panel buttons inside
+		margin: "0 auto"
 	});
 
 	canvas.width  = widthAndHeight;
@@ -153,7 +153,7 @@ Snake.prototype = {
 			"height": "15px",
 			"width": "15px",
 			"position": "absolute",
-			"bottom": "5px",
+			"top": "5px",
 			"left": "5px"
 		});
 
@@ -226,10 +226,20 @@ Snake.prototype = {
 		}
 	},
 	onlose: function() {
-
+		console.log("ASD");
+		this.reset();
 	},
 	onscoreupdate: function(score) {
-		console.log(score);
+
+	},
+	reset: function() {
+		this.snakeComponents = [];
+
+		this.initSnake();
+		this.spawnFood();
+		this.direction = DIRECTION_LEFT;
+
+		this.paused = false;
 	},
 	snakeOverlapped: function() {
 		for (var i = 0; i < this.snakeComponents.length; i++) {
@@ -264,17 +274,40 @@ Snake.prototype = {
 		if (!this.paused && this.frameCount % everyNthFrame === 0) {
 			// determine direction
 			// using else if to make sure that not every of them happen at once
-			if (this.keyDowns[ARROW_LEFT]  && this.direction != DIRECTION_RIGHT) {
-				this.direction = DIRECTION_LEFT;
+			if (this.keyDowns[ARROW_LEFT]) {
+				// if left arrow was pressed
+				if (this.direction != DIRECTION_RIGHT) {
+					// if direction is not right go to left
+					this.direction = DIRECTION_LEFT;
+				}
+
+				// but delete this anyway to don't keep it in the queue
 				delete this.keyDowns[ARROW_LEFT];
-			} else if (this.keyDowns[ARROW_RIGHT] && this.direction != DIRECTION_LEFT) {
-				this.direction = DIRECTION_RIGHT;
+
+				// so it will act like this, if you press RIGHT and then you press DOWN but very quickly
+				// on next frame it will move to RIGHT it will be removed from the queue, then it will be turn for DOWN and it will be also removed form queue
+				// the bug here was that if you pressed RIGHT while you was moving to LEFT and then you pressed down,
+				// the RIGHT was still in the queue but it was not being performed since this.direction == DIRECTION_LEFT
+				// so after moving DOWN and when direction == DIRECTIOND_DOWN, moving to RIGHT was legit so 
+				// pressing right while moving to left, and then pressing down after even 1 second would move the snake down and right 
+				// immidiately, so this is the solution, if the keydown is not valid just remove it
+			} else if (this.keyDowns[ARROW_RIGHT]) {
+				if (this.direction != DIRECTION_LEFT) {
+					this.direction = DIRECTION_RIGHT;
+				}
+
 				delete this.keyDowns[ARROW_RIGHT];
-			} else if (this.keyDowns[ARROW_UP]    && this.direction != DIRECTION_DOWN) {
-				this.direction = DIRECTION_UP;
+			} else if (this.keyDowns[ARROW_UP]) {
+				if (this.direction != DIRECTION_DOWN) {
+					this.direction = DIRECTION_UP;
+				}
+
 				delete this.keyDowns[ARROW_UP];
-			} else if (this.keyDowns[ARROW_DOWN]  && this.direction != DIRECTION_UP) {
-				this.direction = DIRECTION_DOWN;
+			} else if (this.keyDowns[ARROW_DOWN]) {
+				if (this.direction != DIRECTION_UP) {
+					this.direction = DIRECTION_DOWN;
+				}
+
 				delete this.keyDowns[ARROW_DOWN];
 			}
 
@@ -283,8 +316,8 @@ Snake.prototype = {
 			// check if head is out of bounds BEFORE the view gets updated
 			// so it does not seem that snake went out of the box
 			if (headPosition.x < 0 || headPosition.x >= this.gridX || headPosition.y < 0 || headPosition.y >= this.gridY) {
-				this.onlose();
 				this.paused = true;
+				this.onlose();
 				this.frameCount++;
 				window.requestAnimFrame(this.update.bind(this));
 				return;
@@ -301,8 +334,8 @@ Snake.prototype = {
 			// since view is now updated and user can see the actual snake (not previous frame snake)
 			// let's check NOW if snake overlapped itself
 			if (this.snakeOverlapped()) {
-				this.onlose();
 				this.paused = true;
+				this.onlose();
 				this.frameCount++;
 				window.requestAnimFrame(this.update.bind(this));
 				return;
@@ -408,3 +441,12 @@ Object.defineProperty(Snake.prototype, "foodEaten", {
 		return this._foodEaten;
 	}
 });
+
+Object.defineProperty(Snake.prototype, "paused", {
+	set: function(bool) {
+		this._paused = bool;
+	},
+	get: function() {
+		return this._paused;
+	}
+})
